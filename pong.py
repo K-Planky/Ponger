@@ -37,24 +37,33 @@ last_ball = (0, 0)
 ball = (0, 0)
 paddle_y = 113.5
 predict = 113.5
+displacement = (0, 0)
+
+move = True
 
 for frame in range(10000):  # 15
     # action = env.action_space.sample()
 
-    print(abs(predict - paddle_y))
-    if predict - paddle_y < 0:
-        action = 2
+    # print(abs(predict - paddle_y))
+
+    if displacement[0] < 0:
+        predict = 113.5
     else:
+        print(abs(predict - paddle_y))
+
+    if predict - paddle_y < 0 and move:
+        action = 2
+    elif move:
         action = 3
 
-    if abs(predict - paddle_y) < 11:
+    if abs(predict - paddle_y) < 9 or abs(predict - paddle_y) > 200:
         action = 0
 
     img, reward, terminated, truncated, info = env.step(action)
     score += int(reward)
 
     if True:  # frame > 13
-        plt.imshow(img)
+        # plt.imshow(img)
 
         paddle_y = np.mean(np.where(img[34:194, 141] == 147)) + 34
 
@@ -64,22 +73,22 @@ for frame in range(10000):  # 15
             last_ball = ball
             continue
 
-        plt.plot(141.5, paddle_y, "xr")
-        plt.plot(last_ball[0], last_ball[1], "xr")
+        # plt.plot(141.5, paddle_y, "xr")
+        # plt.plot(last_ball[0], last_ball[1], "xr")
 
         # print(ball, last_ball, paddle_y)
 
         displacement = np.subtract(ball, last_ball)
         # print(displacement)
 
-        plt.plot(ball[0] + displacement[0] * 3, ball[1] + displacement[1] * 3, "xg")
+        # plt.plot(ball[0] + displacement[0] * 3, ball[1] + displacement[1] * 3, "xg")
 
-        x_dis_to_paddle = (139 - ball[0]) / displacement[0]
-        predict = cal_y_bounce(x_dis_to_paddle * displacement[1] + ball[1])
+        frame_to_paddle = (142 - ball[0]) / displacement[0]
+        predict = cal_y_bounce(frame_to_paddle * displacement[1] + ball[1])
 
-        # print(x_dis_to_paddle, predict)
+        # print(frame_to_paddle, predict)
 
-        plt.plot(141.5, predict, "xb")
+        # plt.plot(frame_to_paddle * displacement[0] + ball[0], predict, "xb")
 
         # Top bottom border Y
         # plt.axhline(34, color="red")
