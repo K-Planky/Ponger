@@ -19,21 +19,31 @@ def get_ball_loc(img):
 env = gymnasium.make(
     "ALE/Pong-v5",
     obs_type="grayscale",
-    # render_mode="human"
+    # render_mode="human",
 )
 env.reset()
 score = 0
 
 target_frame = 35
 last_ball = (0, 0)
+ball = (0, 0)
+paddle_y = 113.5
 
-for frame in range(target_frame):  # 15
-    action = env.action_space.sample()
+for frame in range(35):  # 15
+    # action = env.action_space.sample()
+
+    if ball[1] - paddle_y < 0:
+        action = 2
+    else:
+        action = 3
+
+    if abs(ball[1] - paddle_y) < 7:
+        action = 0
 
     img, reward, terminated, truncated, info = env.step(action)
     score += int(reward)
 
-    if frame > 26:  # frame > 13
+    if frame > 29:  # frame > 13
         plt.imshow(img)
 
         paddle_y = np.mean(np.where(img[34:194, 141] == 147)) + 34
@@ -52,7 +62,8 @@ for frame in range(target_frame):  # 15
         displacement = np.subtract(ball, last_ball)
         print(displacement)
 
-        plt.plot(ball[0] + displacement[0], ball[1] + displacement[1], "xg")
+        plt.plot(ball[0] + displacement[0] * 3, ball[1] + displacement[1] * 3, "xg")
+
         # Top bottom border Y
         # plt.axhline(34, color="red")
         # plt.axhline(193, color="red")
