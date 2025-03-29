@@ -12,7 +12,8 @@ class Paddle:
 
     def draw(self, win):
         pygame.draw.rect(
-            win, (255, 255, 255), (self.x, self.y, self.WIDTH, self.HEIGHT))
+            win, (255, 255, 255), (self.x, self.y, self.WIDTH, self.HEIGHT)
+        )
 
     def move(self, up=True):
         if up:

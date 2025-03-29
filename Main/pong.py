@@ -57,7 +57,7 @@ def convert_action(action):
 env = gymnasium.make(
     "ALE/Pong-v5",
     obs_type="grayscale",
-    # render_mode="human",
+    render_mode="human",
 )
 env.reset()
 
@@ -127,7 +127,7 @@ for frame in range(10000):
     last_paddle = paddle
 
     if terminated or truncated:
-        obs, info = env.reset()
+        img, info = env.reset()
 
 print(win, lose)
 env.close()
