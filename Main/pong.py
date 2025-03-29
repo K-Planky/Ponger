@@ -8,10 +8,10 @@ gymnasium.register_envs(ale_py)
 
 
 def get_ball_loc(img):
-    _ball_xy = np.where(img[39:189, 23:137] == 236)
+    _ball_xy = np.where(img[40:188, 23:137] == 236)  # 23:137
     if len(_ball_xy[0]):  # Check if empty
         ball_x = np.mean(_ball_xy[1]) + 23  # x
-        ball_y = np.mean(_ball_xy[0]) + 39  # y
+        ball_y = np.mean(_ball_xy[0]) + 40  # y
         return (ball_x, ball_y)
     return (0, 0)
 
@@ -38,6 +38,8 @@ def cal_y_bounce(y, dis_y):
 
 
 def opposite_action(action):
+    if action == 0:
+        return 0
     if action == 2:
         return 3
     return 2
@@ -55,29 +57,20 @@ def convert_action(action):
 env = gymnasium.make(
     "ALE/Pong-v5",
     obs_type="grayscale",
-    render_mode="human",
+    # render_mode="human",
 )
 env.reset()
 
-score = 0
+win = 0
+lose = 0
 last_ball = (0, 0)
 last_paddle = 113.5
-img, reward, terminated, truncated, info = env.step(0)
+displacement = (-1, 0)
+predict = 113.5
+paddle = 113.5
+last_action = 0
 
 for frame in range(10000):
-    paddle = np.mean(np.where(img[34:194, 141] == 147)) + 34
-    ball = get_ball_loc(img)
-
-    if last_ball[0] == 0 or ball[0] == 0:
-        last_ball = ball
-        img, reward, terminated, truncated, info = env.step(0)
-        continue
-
-    displacement = np.subtract(ball, last_ball)
-    frame_to_paddle = (139.5 - ball[0]) / displacement[0]
-    predict = cal_y_bounce(frame_to_paddle * displacement[1] + ball[1], displacement[1])
-    speed = last_paddle - paddle
-
     if displacement[0] < 0:
         predict = 113.5
 
@@ -86,13 +79,31 @@ for frame in range(10000):
     else:
         action = 3
 
-    if abs(speed) > 15 and abs(predict - paddle) < 14:
-        action = opposite_action(action)
-
-    if abs(predict - paddle) < 8 and abs(speed) < 10:
+    if abs(predict - paddle) < 9:
         action = 0
 
-    print(predict, paddle, predict - paddle, speed, convert_action(action), "\n")
+    if last_action == action:
+        action = 0
+
+    img, reward, terminated, truncated, info = env.step(action)
+    if int(reward) > 0:
+        win += 1
+    elif int(reward) < 0:
+        lose += 1
+
+    paddle = np.mean(np.where(img[34:194, 141] == 147)) + 34
+    ball = get_ball_loc(img)
+
+    if last_ball[0] == 0 or ball[0] == 0:
+        last_ball = ball
+        continue
+
+    displacement = np.subtract(ball, last_ball)
+    frame_to_paddle = (139.5 - ball[0]) / displacement[0]  # 139.5
+    predict = cal_y_bounce(frame_to_paddle * displacement[1] + ball[1], displacement[1])
+    speed = last_paddle - paddle
+
+    # print(predict, paddle, predict - paddle, speed, convert_action(action), "\n")
 
     if False:  # frame > 40
         plt.imshow(img)
@@ -111,14 +122,12 @@ for frame in range(10000):
 
         plt.show()
 
-    img, reward, terminated, truncated, info = env.step(action)
-    score += int(reward)
-
+    last_action = action
     last_ball = ball
     last_paddle = paddle
 
     if terminated or truncated:
         obs, info = env.reset()
 
-print(score)
+print(win, lose)
 env.close()
