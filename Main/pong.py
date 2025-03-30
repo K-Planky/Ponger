@@ -54,11 +54,7 @@ def convert_action(action):
         return
 
 
-env = gymnasium.make(
-    "ALE/Pong-v5",
-    obs_type="grayscale",
-    render_mode="human",
-)
+env = gymnasium.make("ALE/Pong-v5", obs_type="grayscale", render_mode="human", mode=1)
 env.reset()
 
 win = 0
@@ -69,10 +65,11 @@ displacement = (-1, 0)
 predict = 113.5
 paddle = 113.5
 last_action = 0
+gave_reward = True
 
 for frame in range(10000):
-    if displacement[0] < 0:
-        predict = 113.5
+    # if displacement[0] < 0:
+    #     predict = 113.5
 
     if predict - paddle < 0:
         action = 2
@@ -82,7 +79,7 @@ for frame in range(10000):
     if abs(predict - paddle) < 9:
         action = 0
 
-    if last_action == action:
+    if last_action == action and abs(predict - paddle) < 80:
         action = 0
 
     img, reward, terminated, truncated, info = env.step(action)
@@ -93,6 +90,12 @@ for frame in range(10000):
 
     paddle = np.mean(np.where(img[34:194, 141] == 147)) + 34
     ball = get_ball_loc(img)
+
+    if not gave_reward and last_ball[0] > ball[0]:
+        gave_reward = True
+        print("GOT REWARD!", last_ball[0], ball[0])
+    elif last_ball[0] < ball[0]:
+        gave_reward = False
 
     if last_ball[0] == 0 or ball[0] == 0:
         last_ball = ball
