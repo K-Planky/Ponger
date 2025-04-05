@@ -11,6 +11,8 @@ gymnasium.register_envs(ale_py)
 env = gymnasium.make(
     "ALE/Pong-v5",
     obs_type="grayscale",
+    repeat_action_probability=0,
+    mode=1,
 )  # no need to change
 env.reset()
 
@@ -25,15 +27,20 @@ def get_ball_loc(img):
 
 
 def test_ai(genome):
-    env = gymnasium.make("ALE/Pong-v5", obs_type="grayscale", render_mode="human")
+    env = gymnasium.make(
+        "ALE/Pong-v5",
+        obs_type="grayscale",
+        render_mode="human",
+        repeat_action_probability=0,
+        mode=1,
+    )
     env.reset()
     net = neat.nn.FeedForwardNetwork.create(genome, config)
     action = 0
 
-    last_x = 0
     last_y = 113.5
     last_paddle = 113.5
-    gave_reward = True
+    last_action = 0
 
     run = True
     while run:
@@ -54,25 +61,21 @@ def test_ai(genome):
                 139.5 - ball_x,
                 ball_y - last_y,
                 right_paddle - last_paddle,
+                last_action,
             )
         )
         decision = output.index(max(output))
 
         if decision == 0:
             action = 0
+            last_action = 0
         elif decision == 1:
             action = 2
+            last_action = -1
         else:
             action = 3
+            last_action = 1
 
-        if ball_x != 0 and last_x != 0:
-            if not gave_reward and last_x - ball_x > 0:
-                print("GOT REWARD!", last_x, ball_x, last_x - ball_x)
-                gave_reward = True
-            elif last_x - ball_x < 0:
-                gave_reward = False
-
-        last_x = ball_x
         last_y = ball_y
         last_paddle = right_paddle
 
@@ -80,6 +83,12 @@ def test_ai(genome):
 
 
 def train_ai(genome, config):
+    env = gymnasium.make(
+        "ALE/Pong-v5",
+        obs_type="grayscale",
+        repeat_action_probability=0,
+        mode=np.random.randint(0, 2),
+    )
     env.reset()
     net = neat.nn.FeedForwardNetwork.create(genome, config)
     action = 0
@@ -89,6 +98,8 @@ def train_ai(genome, config):
     last_paddle = 113.5
     gave_reward = True
     hit_counter = 0
+    last_action = 0
+    # pos_hit = 113.5
 
     run = True
     while run:
@@ -107,24 +118,29 @@ def train_ai(genome, config):
                 139.5 - ball_x,
                 ball_y - last_y,
                 right_paddle - last_paddle,
+                last_action,
             )
         )
         decision = output.index(max(output))
 
         if decision == 0:
             action = 0
+            last_action = 0
         elif decision == 1:
             action = 2
+            last_action = -1
         else:
             action = 3
+            last_action = 1
 
         if ball_x != 0 and last_x != 0:
             if not gave_reward and last_x - ball_x > 0:
-                # if action != 0:
+                if action != 0:
+                    genome.fitness += 1
+                # if pos_hit != right_paddle:
                 #     genome.fitness += 1
-                genome.fitness += 1
+                # pos_hit = right_paddle
                 hit_counter += 1
-                # print("GOT REWARD!", last_x, ball_x, last_x - ball_x)
                 gave_reward = True
             elif last_x - ball_x < 0:
                 gave_reward = False
@@ -145,14 +161,14 @@ def eval_genomes(genomes, config):
 
 def run_neat(config):
     # for loading checkpoint comment out p and then uncomment the line below:
-    # p = neat.Checkpointer.restore_checkpoint("neat-checkpoint-3099")
+    # p = neat.Checkpointer.restore_checkpoint("neat-checkpoint-29")
     p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(10))
 
-    winner = p.run(eval_genomes, 1001)  # CHANGE THIS ONE!
+    winner = p.run(eval_genomes, 31)  # CHANGE THIS ONE!
     with open("best.pickle", "wb") as f:
         pickle.dump(winner, f)
 
