@@ -99,7 +99,7 @@ def train_ai(genome, config):
     gave_reward = True
     hit_counter = 0
     last_action = 0
-    # pos_hit = 113.5
+    pos_hit = 113.5
 
     run = True
     while run:
@@ -135,11 +135,11 @@ def train_ai(genome, config):
 
         if ball_x != 0 and last_x != 0:
             if not gave_reward and last_x - ball_x > 0:
-                if action != 0:
-                    genome.fitness += 1
-                # if pos_hit != right_paddle:
+                # if action != 0:
                 #     genome.fitness += 1
-                # pos_hit = right_paddle
+                if pos_hit != right_paddle:
+                    genome.fitness += 1
+                pos_hit = right_paddle
                 hit_counter += 1
                 gave_reward = True
             elif last_x - ball_x < 0:
@@ -161,14 +161,14 @@ def eval_genomes(genomes, config):
 
 def run_neat(config):
     # for loading checkpoint comment out p and then uncomment the line below:
-    # p = neat.Checkpointer.restore_checkpoint("neat-checkpoint-29")
-    p = neat.Population(config)
+    p = neat.Checkpointer.restore_checkpoint("neat-checkpoint-329")
+    # p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(10))
 
-    winner = p.run(eval_genomes, 31)  # CHANGE THIS ONE!
+    winner = p.run(eval_genomes, 201)  # CHANGE THIS ONE!
     with open("best.pickle", "wb") as f:
         pickle.dump(winner, f)
 

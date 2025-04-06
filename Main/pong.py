@@ -18,21 +18,8 @@ def get_ball_loc(img):
 
 def cal_y_bounce(y, dis_y):
     if y < 33.5:
-        if dis_y == -8:
-            return abs(33.5 - y) + 33.5 - 3
-        elif dis_y == -4:
-            return abs(33.5 - y) + 33.5 - 1
-        elif dis_y == -12:
-            return abs(33.5 - y) + 33.5 - 1
         return abs(33.5 - y) + 33.5
-
     elif y > 193.5:
-        if dis_y == 8:
-            return 193.5 - abs(y - 193.5) + 1
-        elif dis_y == 4:
-            return 193.5 - abs(y - 193.5) - 1
-        elif dis_y == 12:
-            return 193.5 - abs(y - 193.5) + 1
         return 193.5 - abs(y - 193.5)
     return y
 
@@ -59,6 +46,7 @@ env = gymnasium.make(
     obs_type="grayscale",
     render_mode="human",
     repeat_action_probability=0,
+    mode=1,
 )
 env.reset()
 
@@ -83,7 +71,7 @@ for frame in range(10000):
     if abs(predict - paddle) < 9:
         action = 0
 
-    if last_action == action:
+    if last_action == action and abs(predict - paddle) < 40:
         action = 0
 
     img, reward, terminated, truncated, info = env.step(action)
