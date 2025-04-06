@@ -30,9 +30,14 @@ def test_ai(genome):
     env = gymnasium.make(
         "ALE/Pong-v5",
         obs_type="grayscale",
-        render_mode="human",
+        render_mode="rgb_array",
         repeat_action_probability=0,
         mode=1,
+    )
+    env = gymnasium.wrappers.RecordVideo(
+        env,
+        video_folder="saved-video-folder",
+        name_prefix="video-",
     )
     env.reset()
     net = neat.nn.FeedForwardNetwork.create(genome, config)
@@ -83,12 +88,6 @@ def test_ai(genome):
 
 
 def train_ai(genome, config):
-    env = gymnasium.make(
-        "ALE/Pong-v5",
-        obs_type="grayscale",
-        repeat_action_probability=0,
-        mode=np.random.randint(0, 2),
-    )
     env.reset()
     net = neat.nn.FeedForwardNetwork.create(genome, config)
     action = 0
@@ -161,21 +160,21 @@ def eval_genomes(genomes, config):
 
 def run_neat(config):
     # for loading checkpoint comment out p and then uncomment the line below:
-    p = neat.Checkpointer.restore_checkpoint("neat-checkpoint-329")
-    # p = neat.Population(config)
+    # p = neat.Checkpointer.restore_checkpoint("neat-checkpoint-0")
+    p = neat.Population(config)
     p.add_reporter(neat.StdOutReporter(True))
     stats = neat.StatisticsReporter()
     p.add_reporter(stats)
     p.add_reporter(neat.Checkpointer(10))
 
-    winner = p.run(eval_genomes, 201)  # CHANGE THIS ONE!
+    winner = p.run(eval_genomes, 101)  # CHANGE THIS ONE!
     with open("best.pickle", "wb") as f:
         pickle.dump(winner, f)
 
 
 def test_ai_w_config(config):
-    with open("best.pickle", "rb") as f:
-        winner = pickle.load(f)
+    with open("Ponger/Main/gen save/best-mode1.pickle", "rb") as f:
+        winner = pickle.load(f)  # CHANGE THIS ONE!
 
     test_ai(winner)
 
@@ -191,5 +190,5 @@ if __name__ == "__main__":
         neat.DefaultStagnation,
         config_path,
     )
-    run_neat(config)
-    # test_ai_w_config(config)
+    # run_neat(config)
+    test_ai_w_config(config)
