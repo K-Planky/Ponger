@@ -89,10 +89,11 @@ After learning about neural networks and more specifically NEAT (NeuroEvolution 
 
 We were able to successfully train the AI to beat the built-in AI opponent, but our AI has managed to do this by figuring out that the enemy AI is perfectly predictable. An issue with the ALE version is that the ball always spawn with the same trajectory toward the enemy AI, and the enemy AI will always respond in the same exact way. As such, through training, our AI has learned to stay in one spot where the enemy AI will keep losing. 
 
-*insert gif here of the no movement cheese spot*
+<p align="center">
+    <img src="Imgs/STAND SILL OMG.gif"><br>
+</p>
 
 ### Enforcing no cheese spot rule:
-
 To discourage this behavior, we changed the reward system after a few generations of training. At first, we added a rule where standing still gave no reward. This encouraged movement but risked missing the ball. Once it learned to move to hit the ball, we removed that rule so it could slow down and hit the ball more reliably. To prevent it from finding a cheese spot and staying there, we added another rule: no reward if it hits the ball from the same spot repeatedly. This led us to achieve this:
 
 <p align="center">
