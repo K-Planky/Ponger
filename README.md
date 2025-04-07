@@ -4,7 +4,7 @@
     Collaborated by: Chachris Martin Kurz (6681003) and Pasin Visuttipinate (6581038)
 </p>
 
-We trained an AI using [NEAT](https://github.com/CodeReclaimers/neat-python/tree/master) (NeuroEvolution of Augmenting Topologies) with two different versions of Pong: [ALE](https://github.com/Farama-Foundation/Arcade-Learning-Environment) version (The Arcade Learning Environment) and Pygame version. Both of these versions allow us to play Pong, but with a few differences in the setup. 
+We trained an AI using [NEAT](https://github.com/CodeReclaimers/neat-python/tree/master) (NeuroEvolution of Augmenting Topologies) with two different versions of Pong: [ALE](https://github.com/Farama-Foundation/Arcade-Learning-Environment) version (The Arcade Learning Environment) and [Pygame](https://github.com/pygame/pygame) version. Both of these versions allow us to play Pong, but with a few differences in the setup. 
 
 ## Pong [ALE](https://github.com/Farama-Foundation/Arcade-Learning-Environment) Version
 In this version of the game, we are only allowed to play as the right paddle against a built-in AI which controls the left paddle. Aside from changing how the game is rendered, how small the paddle is, and whether the ball speed is high or low, we are unable to change anything else. 
@@ -31,7 +31,7 @@ env.close()
 ```
 
 <p align="center">
-    <img src="Imgs/ALE.gif" width="350">
+    <img src="Imgs/ALE ex.gif" width="350">
 </p>
 
 Additionally, the obs only gives us an image frame for each frame of the game, so we have to do image processing to get all the necessary information ourselves, e.g., the ball and paddle location, the ball speed and direction, etc.
