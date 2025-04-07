@@ -31,7 +31,7 @@ env.close()
 ```
 
 <p align="center">
-    <img src="Imgs/ALE.gif">
+    <img src="Imgs/ALE.gif" width="350">
 </p>
 
 Additionally, the obs only gives us an image frame for each frame of the game, so we have to do image processing to get all the necessary information ourselves, e.g., the ball and paddle location, the ball speed and direction, etc.
@@ -39,16 +39,18 @@ Additionally, the obs only gives us an image frame for each frame of the game, s
 ## Pong [Pygame](https://github.com/pygame/pygame) Version
 In comparison to the ALE version, we are allowed to take complete control over the configuration of the game. This means we can, for example, set the speed of the ball, play as both left and right paddles, or ensure that the initial trajectory of the ball is randomized.
 
-*gif here*
+<p align="center">
+    <img src="Imgs/Pygame.gif" width="350">
+</p>
 
 Unlike the ALE version where we have to perform some image processing to acquire necessary information such as ball and paddle locations, this version already gives us all the necessary information.
 
-## The Versions
+# The Versions
 
-In total, we have 3 different versions to discuss: 
-- “Manually - Planky’s AI (ALE)”
-- “ALE NEAT”
-- “Pygame NEAT”.
+In total, we have 3 different versions to discuss:
+- Manually - Planky’s AI (ALE)
+- ALE NEAT
+- Pygame NEAT
 
 
 ## Manually - Planky’s AI ([ALE](https://github.com/Farama-Foundation/Arcade-Learning-Environment))
@@ -56,7 +58,7 @@ In total, we have 3 different versions to discuss:
 When we first got our hands on this version of the game, as part of exploring how to work with the environment, we manually created an “AI” using math. More specifically, using the coordinates of the ball from different frames, we were able to calculate the velocity, how many frames it would take the ball to reach the paddle, as well as the predicted trajectory even after the ball bounces from the top or bottom borders. Using this information, the paddle will decide to move up, down, or not at all. Although there is no actual AI training in this version, the performance is quite good.
 
 <p align="center">
-    <img src="Imgs/Manual.gif"><br>
+    <img src="Imgs/Manual.gif" width="350"><br>
     This version can be found in <a href="Main\pong.py">pong.py</a>.
 </p>
 
@@ -90,14 +92,14 @@ After learning about neural networks and more specifically NEAT (NeuroEvolution 
 We were able to successfully train the AI to beat the built-in AI opponent, but our AI has managed to do this by figuring out that the enemy AI is perfectly predictable. An issue with the ALE version is that the ball always spawn with the same trajectory toward the enemy AI, and the enemy AI will always respond in the same exact way. As such, through training, our AI has learned to stay in one spot where the enemy AI will keep losing. 
 
 <p align="center">
-    <img src="Imgs/STAND SILL OMG.gif"><br>
+    <img src="Imgs\Stand still cheese.gif" width="350">
 </p>
 
 ### Enforcing no cheese spot rule:
 To discourage this behavior, we changed the reward system after a few generations of training. At first, we added a rule where standing still gave no reward. This encouraged movement but risked missing the ball. Once it learned to move to hit the ball, we removed that rule so it could slow down and hit the ball more reliably. To prevent it from finding a cheese spot and staying there, we added another rule: no reward if it hits the ball from the same spot repeatedly. This led us to achieve this:
 
 <p align="center">
-    <img src="Imgs\ALE AI.gif"><br>
+    <img src="Imgs\ALE AI.gif" width="350"><br>
     This version can be found in <a href="Main\smart_pong.py">smart_pong.py</a>.
 </p>
 
@@ -105,15 +107,16 @@ To discourage this behavior, we changed the reward system after a few generation
 
 Lastly, we wanted to see if we could train the AIs of both left and right paddles against each other, and additionally see how good of an opponent it would be against a human. Since the ALE version restricts us to only play as the right paddle, we had to move over to this Pygame version of Pong. 
 
-*insert Pygame version of pong here*
+<p align="center">
+    <img src="Imgs/Pygame OG.gif" width="350">
+</p>
 
 The training process here is practically the same as in the ALE NEAT version. Since we have two of our own networks fighting each other, though, each iteration of training initializes two genomes and the fitness of both are evaluated based on how many times they manage to hit the ball back. 
 
 In the end, we managed to successfully train an AI that could effectively play against other AIs, as well as actual humans. However, the randomness of humans meant that the AI performed worse against humans compared to other AIs. After the AI was allowed to train for more generations, though, it has become practically unbeatable. 
 
-*insert Pygame version of AI playing fast version*
 <p align="center">
-    <img src=""><br>
+    <img src="Imgs/Pygame SPEED.gif" width="350"><br>
     This version can be found in <a href="NEAT-Pong-Python\PongNN.py">PongNN.py</a>.
 </p>
 

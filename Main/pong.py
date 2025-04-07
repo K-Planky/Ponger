@@ -118,5 +118,5 @@ for frame in range(10000):
     if terminated or truncated:
         img, info = env.reset()
 
-print(win, lose)
+# print(win, lose)
 env.close()
