@@ -31,7 +31,7 @@ env.close()
 ```
 
 <p align="center">
-    <img src="Imgs/ALE ex.gif" width="350">
+    <img src="Imgs/ALE.gif" width="350">
 </p>
 
 Additionally, the obs only gives us an image frame for each frame of the game, so we have to do image processing to get all the necessary information ourselves, e.g., the ball and paddle location, the ball speed and direction, etc.
